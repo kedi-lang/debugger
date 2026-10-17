@@ -254,7 +254,7 @@ class DebugAdapter:
                 try:
                     message = self._outgoing.get(timeout=0.05)
                 except queue.Empty:
-                    if self._closed.is_set():
+                    if self._closed.is_set() and self._outgoing.empty():
                         return
                     continue
                 if message is None:
@@ -526,6 +526,11 @@ class DebugAdapter:
                 os.killpg(process.pid, signal.SIGTERM)
             except ProcessLookupError:
                 pass
+            except PermissionError as exc:
+                try:
+                    process.wait(timeout=_STOP_TIMEOUT)
+                except subprocess.TimeoutExpired:
+                    raise exc from None
             try:
                 process.wait(timeout=_STOP_TIMEOUT)
             except subprocess.TimeoutExpired:
@@ -534,6 +539,11 @@ class DebugAdapter:
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
+            except PermissionError as exc:
+                try:
+                    process.wait(timeout=_STOP_TIMEOUT)
+                except subprocess.TimeoutExpired:
+                    raise exc from None
         try:
             process.wait(timeout=_STOP_TIMEOUT)
         except subprocess.TimeoutExpired:
