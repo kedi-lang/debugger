@@ -9,6 +9,15 @@ description = "Optional stdio Debug Adapter Protocol backend for Kedi"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
+authors = [
+    {name = "Mert Sırakaya", email = "mert@kedi-lang.org"},
+    {name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net"},
+]
+# PyPI shows only the first author and the first maintainer, so the two lists differ in order.
+maintainers = [
+    {name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net"},
+    {name = "Mert Sırakaya", email = "mert@kedi-lang.org"},
+]
 dependencies = ["kedi>=0.1.1,<0.2", "python-dotenv>=1.2.2,<2"]
 
 [project.scripts]
