@@ -12,12 +12,17 @@ from typing import Any, Iterator, TypedDict
 from pydantic import BaseModel
 from typing_extensions import NotRequired
 
+from kedi.lang.compiler import environment as _environment
 from kedi.lang.compiler.environment import KediEnv, ScopeFrame
+
 from kedi.promise import KediPromise
 
 from .redaction import is_token_metric_name
 
 __all__ = ["Snapshot", "SnapshotLimitError", "SnapshotNode"]
+
+# Kedi keeps prelude names in its own dict subclass since 0.1.6; older releases use KediEnv.
+_PRELUDE_NAMESPACE: type = getattr(_environment, "PreludeNamespace", KediEnv)
 
 
 class SnapshotNode(TypedDict):
@@ -364,7 +369,7 @@ class Snapshot:
         storage = None
         size = 0
         iterator: Iterator | None = None
-        if cls is dict or cls is ScopeFrame or cls is KediEnv:
+        if cls is dict or cls is ScopeFrame or cls is KediEnv or cls is _PRELUDE_NAMESPACE:
             storage = value
         elif any(cls is container for container in (list, tuple, set, frozenset)):
             size = len(value)
